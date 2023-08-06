@@ -5,6 +5,7 @@ using System.Numerics;
 
 using Decal.Adapter;
 using ImGuiNET;
+using Microsoft.DirectX.Direct3D;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
 
@@ -38,6 +39,8 @@ namespace DecalTextureTest
 
             // set to show our icon in the UBService HudBar
             hud.ShowInBar = true;
+            hud.Visible = true;
+            hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
 
             // subscribe to the hud render event so we can draw some controls
             hud.OnRender += Hud_OnRender;
@@ -60,6 +63,10 @@ namespace DecalTextureTest
                             PluginCore.Log(name);
                         }
                         PluginCore.Log("...Done enumerating manifest resourc streams;");
+
+                        // WIP
+                        Texture tx = new Texture(texture.TexturePtr);
+
                         using (var dbmp = new Bitmap(manifestResourceStream))
                         {
                             texture = new ManagedTexture(dbmp);
@@ -86,8 +93,7 @@ namespace DecalTextureTest
         {
             try
             {
-
-                ImGui.Image(texture.TexturePtr, new Vector2(200, 200));
+                ImGui.Text("Title Goes Here");
             }
             catch (Exception ex)
             {
