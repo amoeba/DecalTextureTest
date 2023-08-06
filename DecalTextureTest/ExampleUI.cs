@@ -95,17 +95,6 @@ namespace DecalTextureTest
             }
         }
 
-        /// <summary>
-        /// Called when our print test text button is pressed
-        /// </summary>
-        private void OnPrintTestTextButtonPressed()
-        {
-            var textToShow = $"Test Text:\n{TestText}";
-
-            CoreManager.Current.Actions.AddChatText(textToShow, 1);
-            UBService.Huds.Toaster.Add(textToShow, ToastType.Info);
-        }
-
         public void Dispose()
         {
             hud.Dispose();
