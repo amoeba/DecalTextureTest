@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Drawing;
+using System.IO;
 using System.Numerics;
+
 using Decal.Adapter;
 using ImGuiNET;
 using UtilityBelt.Service;
@@ -24,8 +27,12 @@ namespace DecalTextureTest
         /// </summary>
         public string TestText = DefaultTestText.ToString();
 
+        public ManagedTexture texture;
+
         public ExampleUI()
         {
+            CoreManager.Current.Actions.AddChatText("ExampleUI()", 1);
+
             // Create a new UBService Hud
             hud = UBService.Huds.CreateHud("DecalTextureTest");
 
@@ -34,6 +41,32 @@ namespace DecalTextureTest
 
             // subscribe to the hud render event so we can draw some controls
             hud.OnRender += Hud_OnRender;
+            hud.OnPreRender += Hud_OnPreRender;
+        }
+
+        private void Hud_OnPreRender(object sender, EventArgs e)
+        {
+            try
+            {
+                CoreManager.Current.Actions.AddChatText("Hud_OnPreRender()", 1);
+
+                if (texture == null)
+                {
+                    using (Stream manifestResourceStream = GetType().Assembly.GetManifestResourceStream("DecalTextureTest.test.png"))
+                    {
+                        using (var dbmp = new Bitmap(manifestResourceStream))
+                        {
+                            texture = new ManagedTexture(dbmp);
+                        }
+                    }
+                }
+                ImGui.SetNextWindowPos(new Vector2(100, 100), ImGuiCond.Appearing);
+                ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.Appearing);
+            }
+            catch (Exception ex)
+            {
+                PluginCore.Log(ex);
+            }
         }
 
         /// <summary>
@@ -43,6 +76,8 @@ namespace DecalTextureTest
         {
             try
             {
+                CoreManager.Current.Actions.AddChatText("Hud_OnRender()", 1);
+
                 ImGui.InputTextMultiline("Test Text", ref TestText, 5000, new Vector2(400, 150));
 
                 if (ImGui.Button("Print Test Text"))
@@ -56,6 +91,8 @@ namespace DecalTextureTest
                 {
                     TestText = DefaultTestText;
                 }
+
+                ImGui.Image(texture.TexturePtr, new Vector2(200, 200));
             }
             catch (Exception ex)
             {
