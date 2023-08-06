@@ -14,6 +14,9 @@
     <AssemblyName>DecalTextureTest</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="test.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="PluginCore.cs" />
     <None Include="ExampleUI.cs" />
     <Content Include="README.md" />
@@ -21,6 +24,11 @@
     <Content Include="scripts\post-build.ps1" />
     <Content Include="deps\Decal.Adapter.dll" />
     <Content Include="deps\Decal.Interop.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="test.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">
@@ -39,11 +47,6 @@
     <PackageReference Include="UtilityBelt.Service" Version="2.1.2">
       <ExcludeAssets>runtime; build;</ExcludeAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="test.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="powershell -ExecutionPolicy RemoteSigned -NoProfile $(ProjectDir)scripts\post-build.ps1 -NuGetPackageRoot $(NuGetPackageRoot) -ProjectDir $(ProjectDir)" />

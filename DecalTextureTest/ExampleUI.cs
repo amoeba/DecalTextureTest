@@ -54,11 +54,21 @@ namespace DecalTextureTest
                 {
                     using (Stream manifestResourceStream = GetType().Assembly.GetManifestResourceStream("DecalTextureTest.test.png"))
                     {
+                        PluginCore.Log("Starting to enumermate manifest resources...");
+                        foreach (string name in GetType().Assembly.GetManifestResourceNames())
+                        {
+                            PluginCore.Log(name);
+                        }
+                        PluginCore.Log("...Done enumerating manifest resourc streams;");
                         using (var dbmp = new Bitmap(manifestResourceStream))
                         {
                             texture = new ManagedTexture(dbmp);
                         }
                     }
+                } else
+                {
+                    CoreManager.Current.Actions.AddChatText(texture.TexturePtr.ToString(), 1);
+
                 }
                 ImGui.SetNextWindowPos(new Vector2(100, 100), ImGuiCond.Appearing);
                 ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.Appearing);
@@ -76,21 +86,6 @@ namespace DecalTextureTest
         {
             try
             {
-                CoreManager.Current.Actions.AddChatText("Hud_OnRender()", 1);
-
-                ImGui.InputTextMultiline("Test Text", ref TestText, 5000, new Vector2(400, 150));
-
-                if (ImGui.Button("Print Test Text"))
-                {
-                    OnPrintTestTextButtonPressed();
-                }
-
-                ImGui.SameLine();
-
-                if (ImGui.Button("Reset Test Text"))
-                {
-                    TestText = DefaultTestText;
-                }
 
                 ImGui.Image(texture.TexturePtr, new Vector2(200, 200));
             }

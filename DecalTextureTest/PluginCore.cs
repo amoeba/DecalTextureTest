@@ -19,7 +19,12 @@ namespace DecalTextureTest
         /// <summary>
         /// Assembly directory containing the plugin dll
         /// </summary>
-        public static string AssemblyDirectory => System.IO.Path.GetDirectoryName(Assembly.GetAssembly(typeof(PluginCore)).Location);
+        public static string AssemblyDirectory { get; internal set; }
+
+        protected void FilterSetup(string assemblyDirectory)
+        {
+            AssemblyDirectory = assemblyDirectory;
+        }
 
         /// <summary>
         /// Called when your plugin is first loaded.
@@ -27,7 +32,11 @@ namespace DecalTextureTest
         protected override void Startup()
         {
             try
-            {
+            { 
+                Log("Startup");
+                CoreManager.Current.Actions.AddChatText("Startup", 1);
+                CoreManager.Current.Actions.AddChatText("X" + AssemblyDirectory, 1);
+
                 // subscribe to CharacterFilter_LoginComplete event, make sure to unscribe later.
                 // note: if the plugin was reloaded while ingame, this event will never trigger on the newly reloaded instance.
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
@@ -52,6 +61,8 @@ namespace DecalTextureTest
             // throwing an uncaught exception inside one will generally hard crash the client.
             try
             {
+                Log("LoginComplete");
+
                 CoreManager.Current.Actions.AddChatText($"This is my new decal plugin. CharacterFilter_LoginComplete", 1);
             }
             catch (Exception ex)
@@ -67,6 +78,8 @@ namespace DecalTextureTest
         {
             try
             {
+                Log("Shutdown");
+
                 // make sure to unsubscribe from any events we were subscribed to. Not doing so
                 // can cause the old plugin to stay loaded between hot reloads.
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
@@ -100,7 +113,16 @@ namespace DecalTextureTest
             {
                 File.AppendAllText(System.IO.Path.Combine(AssemblyDirectory, "log.txt"), $"{message}\n");
             }
-            catch { }
+            catch
+            {
+                try
+                {
+                    CoreManager.Current.Actions.AddChatText(Assembly.GetAssembly(typeof(PluginCore)).Location, 1);
+
+                    CoreManager.Current.Actions.AddChatText(message, 1);
+                }
+                catch { }
+            }
         }
         #endregion // logging
     }
