@@ -1,58 +1,25 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
 using System.Numerics;
 
-using Decal.Adapter;
-using Decal.Adapter.Wrappers;
-using System.Runtime.InteropServices;
-
 using ImGuiNET;
-using Microsoft.DirectX.Direct3D;
-
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
-using ACE.DatLoader.FileTypes;
-using VirindiViewService;
+
 
 namespace DecalTextureTest
 {
     internal class ExampleUI : IDisposable
     {
-        /// <summary>
-        /// The UBService Hud
-        /// </summary>
-        private readonly UtilityBelt.Service.Views.Hud hud;
-
-        /// <summary>
-        /// The default value for TestText.
-        /// </summary>
-        public const string DefaultTestText = "Some Test Text";
-
-        /// <summary>
-        /// Some test text. This value is used to the text input in our UI.
-        /// </summary>
-        public string TestText = DefaultTestText.ToString();
-
-
-
-        public ManagedTexture texture;
-
-
+        private readonly Hud hud;
+        private const string message = "Test Text Goes Here";
 
         public ExampleUI()
         {
-            CoreManager.Current.Actions.AddChatText("ExampleUI()", 1);
-
-            // Create a new UBService Hud
             hud = UBService.Huds.CreateHud("DecalTextureTest");
-
-            // set to show our icon in the UBService HudBar
             hud.ShowInBar = true;
             hud.Visible = true;
             //hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
 
-            // subscribe to the hud render event so we can draw some controls
             hud.OnRender += Hud_OnRender;
             hud.OnPreRender += Hud_OnPreRender;
         }
@@ -61,25 +28,6 @@ namespace DecalTextureTest
         {
             try
             {
-                CoreManager.Current.Actions.AddChatText("Hud_OnPreRender()", 1);
-
-                if (texture == null)
-                {
-                    using (Stream manifestResourceStream = GetType().Assembly.GetManifestResourceStream("DecalTextureTest.test.png"))
-                    {
-
-                        using (var dbmp = new Bitmap(manifestResourceStream))
-                        {
-
-                            texture = new ManagedTexture(dbmp);
-
-                        }
-                    }
-                } else
-                {
-                    CoreManager.Current.Actions.AddChatText(texture.TexturePtr.ToString(), 1);
-
-                }
                 ImGui.SetNextWindowPos(new Vector2(100, 100), ImGuiCond.Appearing);
                 ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.Appearing);
             }
@@ -89,28 +37,15 @@ namespace DecalTextureTest
             }
         }
 
-        /// <summary>
-        /// Called every time the ui is redrawing.
-        /// </summary>
         private void Hud_OnRender(object sender, EventArgs e)
         {
             try
             {
-                ImGui.Text("Title Goes Here");
-                //ImGui.Image(texture.TexturePtr, new Vector2(200, 200));
-
+                ImGui.InvisibleButton("renderbutton", ImGui.GetContentRegionAvail());
                 Vector2 p0 = ImGui.GetItemRectMin();
                 Vector2 p1 = ImGui.GetItemRectMax();
-                var size = new Vector2(p1.X - p0.X, p1.Y - p0.Y);
-
-                var drawList = ImGui.GetWindowDrawList();
-                drawList.PushClipRect(p0, p1);
-                var t = ImGui.GetTime();
-                for (int n = 0; n < (1.0f + Math.Sin(t * 5.7f)) * 40.0f; n++)
-                    drawList.AddCircle(new Vector2(p0.X + size.X * 0.5f, p0.Y + size.Y * 0.5f), size.X * (0.01f + n * 0.03f),
-                        (0xFF000000 + (((uint)Math.Min(n * 8, 255)) << 16) + +(((uint)Math.Min(n * 8, 255)))), 50, 3);
-
-                drawList.PopClipRect();
+                ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+                drawList.AddText(ImGui.GetFont(), 40, new Vector2(p0.X, p0.Y), 0xFFFFFFFF, message);
             }
             catch (Exception ex)
             {
