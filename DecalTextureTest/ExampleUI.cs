@@ -11,14 +11,16 @@ namespace DecalTextureTest
     internal class ExampleUI : IDisposable
     {
         private readonly Hud hud;
-        private const string message = "Test Text Goes Here";
+        private string message;
 
-        public ExampleUI()
+        public ExampleUI(string _message)
         {
-            hud = UBService.Huds.CreateHud("DecalTextureTest");
+            message = _message;
+
+            hud = UBService.Huds.CreateHud("ExampelUI");
             hud.ShowInBar = true;
             hud.Visible = true;
-            //hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
+            hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
 
             hud.OnRender += Hud_OnRender;
             hud.OnPreRender += Hud_OnPreRender;
@@ -28,8 +30,15 @@ namespace DecalTextureTest
         {
             try
             {
-                ImGui.SetNextWindowPos(new Vector2(100, 100), ImGuiCond.Appearing);
-                ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.Appearing);
+                // TODO: This works, but factor out and cleanup
+                float w = 300;
+                float h = 200;
+                var io = ImGui.GetIO();
+                var v = ImGui.GetMainViewport();
+                var c = v.GetCenter();
+                ImGui.SetNextWindowPos(new Vector2(c.X - w/2, c.Y - w/2));
+                ImGui.SetNextWindowSize(new Vector2(w, h), ImGuiCond.Appearing);
+                
             }
             catch (Exception ex)
             {
