@@ -12,6 +12,7 @@ namespace DecalTextureTest
     {
         private DebugUI ui;
         public Timer timer;
+        public static int duration_ms = 3000;
 
         public static string AssemblyDirectory { get; internal set; }
 
@@ -65,7 +66,7 @@ namespace DecalTextureTest
         public static void ShowMessage(string message)
         {
             ExampleUI tempHud = new ExampleUI(message);
-            Timer timer = new Timer(3000);
+            Timer timer = new Timer(duration_ms);
             timer.Elapsed += (s, e) =>
             {
                 timer.Stop();
