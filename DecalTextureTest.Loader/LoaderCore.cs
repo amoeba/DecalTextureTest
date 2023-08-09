@@ -172,6 +172,10 @@ namespace DecalTextureTest
                 pluginType = pluginAssembly.GetType($"{PluginAssemblyNamespace}.PluginCore");
                 pluginInstance = Activator.CreateInstance(pluginType);
 
+                // From trevis, this fixes AssemblyDirectory in PluginCore
+                var setupMethod = pluginType.GetMethod("FilterSetup", BindingFlags.NonPublic | BindingFlags.Instance);
+                setupMethod.Invoke(pluginInstance, new object[] { AssemblyDirectory });
+
                 var startupMethod = pluginType.GetMethod("Startup", BindingFlags.NonPublic | BindingFlags.Instance);
                 startupMethod.Invoke(pluginInstance, new object[] { });
 
