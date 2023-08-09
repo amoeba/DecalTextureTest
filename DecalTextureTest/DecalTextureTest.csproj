@@ -48,6 +48,11 @@
       <ExcludeAssets>runtime; build;</ExcludeAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="HyliaSerifBeta-Regular.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="powershell -ExecutionPolicy RemoteSigned -NoProfile $(ProjectDir)scripts\post-build.ps1 -NuGetPackageRoot $(NuGetPackageRoot) -ProjectDir $(ProjectDir)" />
   </Target>

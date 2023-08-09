@@ -5,7 +5,6 @@ using ImGuiNET;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
 
-
 namespace DecalTextureTest
 {
     internal class ExampleUI : IDisposable
@@ -64,7 +63,7 @@ namespace DecalTextureTest
                 double s = PluginCore.duration_ms / 1000;
                 double t = Math.Min(Math.Max((Math.Sin(t1) * s) / s, 0.0f), 1.0f);
                 uint c = ImGui.Vec4ToCol(new Vector4(1.0f, 1.0f, 1.0f, (float)t));
-                drawList.AddText(ImGui.GetFont(), 40, new Vector2(p0.X, p0.Y), c, "Just Testing");
+                drawList.AddText(PluginCore.font, 40, new Vector2(p0.X, p0.Y), c, "Just Testing...");
             }
             catch (Exception ex)
             {

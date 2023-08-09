@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Numerics;
-using System.Timers;
+
 using Decal.Adapter;
 using ImGuiNET;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
-
 
 namespace DecalTextureTest
 {
     internal class DebugUI : IDisposable
     {
         private readonly Hud hud;
-        private const string message = "Test Text Goes Here";
 
         public DebugUI()
         {
@@ -49,13 +47,15 @@ namespace DecalTextureTest
                     PluginCore.ShowMessage("Test!");
 
                 }
+                ImGui.PushFont(PluginCore.font);
+                ImGui.Text("Text in Custom Font");
+                ImGui.PopFont();
             }
             catch (Exception ex)
             {
                 PluginCore.Log(ex);
             }
         }
-
 
         public void Dispose()
         {

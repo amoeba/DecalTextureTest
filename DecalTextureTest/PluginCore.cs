@@ -4,16 +4,21 @@ using System.Reflection;
 using System.Timers;
 
 using Decal.Adapter;
+using ImGuiNET;
 
 namespace DecalTextureTest
 {
     [FriendlyName("DecalTextureTest")]
     public class PluginCore : PluginBase
     {
-        private DebugUI ui;
         public Timer timer;
         public static int duration_ms = 3000;
 
+        // Imgui
+        private DebugUI ui;
+        public static ImFontPtr font;
+
+        // Misc
         public static string AssemblyDirectory { get; internal set; }
 
         protected void FilterSetup(string assemblyDirectory)
@@ -21,21 +26,34 @@ namespace DecalTextureTest
             AssemblyDirectory = assemblyDirectory;
         }
 
-        /// <summary>
-        /// Called when your plugin is first loaded.
-        /// </summary>
         protected override void Startup()
         {
             try
             { 
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
 
+                SetUpImgui();
                 ui = new DebugUI();
             }
             catch (Exception ex)
             {
                 Log(ex);
             }
+        }
+
+        private void SetUpImgui()
+        {
+            try
+            {
+                Log("Font is "+ font.ToString());
+                string font_path = AssemblyDirectory + "\\HyliaSerifBeta-Regular.otf";
+                ImGuiIOPtr io = ImGui.GetIO();
+                font = io.Fonts.AddFontFromFileTTF(font_path, 46.0f);
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }            
         }
 
         private void CharacterFilter_LoginComplete(object sender, EventArgs e)
@@ -54,8 +72,8 @@ namespace DecalTextureTest
             {
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
 
-                ui.Dispose();
-                timer.Dispose();
+                if (ui != null) ui.Dispose();
+                if (timer != null) timer.Dispose();
             }
             catch (Exception ex)
             {
@@ -78,20 +96,11 @@ namespace DecalTextureTest
             timer.Start();
         }
 
-        #region logging
-        /// <summary>
-        /// Log an exception to log.txt in the same directory as the plugin.
-        /// </summary>
-        /// <param name="ex"></param>
         internal static void Log(Exception ex)
         {
             Log(ex.ToString());
         }
 
-        /// <summary>
-        /// Log a string to log.txt in the same directory as the plugin.
-        /// </summary>
-        /// <param name="message"></param>
         internal static void Log(string message)
         {
             try
@@ -108,6 +117,5 @@ namespace DecalTextureTest
                 catch { }
             }
         }
-        #endregion // logging
     }
 }
