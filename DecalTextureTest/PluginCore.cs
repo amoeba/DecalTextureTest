@@ -2,9 +2,11 @@
 using System.IO;
 using System.Reflection;
 using System.Timers;
-
+using AcClient;
 using Decal.Adapter;
+using Decal.Adapter.Wrappers;
 using ImGuiNET;
+using Timer = System.Timers.Timer;
 
 namespace DecalTextureTest
 {
@@ -31,34 +33,10 @@ namespace DecalTextureTest
             try
             { 
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
+                CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
 
                 SetUpImgui();
                 ui = new DebugUI();
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
-            }
-        }
-
-        private void SetUpImgui()
-        {
-            try
-            {
-                Log("Font is "+ font.ToString());
-                string font_path = AssemblyDirectory + "\\HyliaSerifBeta-Regular.otf";
-                ImGuiIOPtr io = ImGui.GetIO();
-                font = io.Fonts.AddFontFromFileTTF(font_path, 46.0f);
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
-            }            
-        }
-
-        private void CharacterFilter_LoginComplete(object sender, EventArgs e)
-        {
-            try {
             }
             catch (Exception ex)
             {
@@ -71,6 +49,7 @@ namespace DecalTextureTest
             try
             {
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
+                CoreManager.Current.CharacterFilter.ChangePortalMode -= CharacterFilter_ChangePortalMode;
 
                 if (ui != null) ui.Dispose();
                 if (timer != null) timer.Dispose();
@@ -78,6 +57,39 @@ namespace DecalTextureTest
             catch (Exception ex)
             {
                 Log(ex);
+            }
+        }
+
+        private void CharacterFilter_LoginComplete(object sender, EventArgs e)
+        {
+            try {
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+        }
+
+        private void CharacterFilter_ChangePortalMode(object sender, ChangePortalModeEventArgs e)
+        {
+            if (e.Type == PortalEventType.EnterPortal)
+            {
+                Log("Portal Entered");
+            }
+            else if (e.Type == PortalEventType.ExitPortal)
+            {
+                Log("Portal exited");
+
+                // FIXME: This is just temporary until Tracker.cs is built out
+                Location l = new Location(CoreManager.Current.Actions.Landcell);
+
+                if (l.IsIndoors())
+                {
+                    ShowMessage("Holtburg Town Hall");
+                } else
+                {
+                    ShowMessage("Holtburg");
+                }
             }
         }
 
@@ -90,10 +102,31 @@ namespace DecalTextureTest
                 timer.Stop();
                 timer.Dispose();
                 tempHud.Dispose();
-
-                CoreManager.Current.Actions.AddChatText("Elapsed", 1);
             };
             timer.Start();
+        }
+
+        private void SetUpImgui()
+        {
+            try
+            {
+                // Temporary fix for UB not dealing with fonts right
+                // Don't load our custom font is this is a hot reload
+                if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
+                {
+                    Log("Skipping ImGui setup (font loading) because HMR.");
+
+                    return;
+                }
+
+                string font_path = AssemblyDirectory + "\\HyliaSerifBeta-Regular.otf";
+                ImGuiIOPtr io = ImGui.GetIO();
+                font = io.Fonts.AddFontFromFileTTF(font_path, 46.0f);
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
         }
 
         internal static void Log(Exception ex)

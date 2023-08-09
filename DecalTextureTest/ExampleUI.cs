@@ -4,6 +4,7 @@ using System.Numerics;
 using ImGuiNET;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DecalTextureTest
 {
@@ -58,12 +59,14 @@ namespace DecalTextureTest
                 
                 // Text fading
                 // FIXME: Factor out most of this
+                // FIXME: Figure out if we can properly center our text (i.e. do 
+                //        (font metrics)
                 double t1 = ImGui.GetTime() - t0;
                 // Messy bit of code to smoothly move from 0-1 and back to 0
                 double s = PluginCore.duration_ms / 1000;
                 double t = Math.Min(Math.Max((Math.Sin(t1) * s) / s, 0.0f), 1.0f);
                 uint c = ImGui.Vec4ToCol(new Vector4(1.0f, 1.0f, 1.0f, (float)t));
-                drawList.AddText(PluginCore.font, 40, new Vector2(p0.X, p0.Y), c, "Just Testing...");
+                drawList.AddText(PluginCore.font, 40, new Vector2(p0.X, p0.Y), c, message);
             }
             catch (Exception ex)
             {

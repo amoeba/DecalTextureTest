@@ -47,9 +47,13 @@ namespace DecalTextureTest
                     PluginCore.ShowMessage("Test!");
 
                 }
+                Vector2 size_one = ImGui.CalcTextSize("Hello World");
                 ImGui.PushFont(PluginCore.font);
+                Vector2 size_two = ImGui.CalcTextSize("Hello World");
                 ImGui.Text("Text in Custom Font");
                 ImGui.PopFont();
+                ImGui.Text("Size One is " + size_one.X.ToString());
+                ImGui.Text("Size Two is " + size_two.X.ToString());
             }
             catch (Exception ex)
             {
