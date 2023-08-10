@@ -5,12 +5,12 @@ using Decal.Adapter;
 
 namespace DecalTextureTest
 {
-    internal class Tracker : IDisposable
+    internal class LandcellTracker : IDisposable
     {
         private Timer timer;
         int LastLandcell;
             
-        public Tracker()
+        public LandcellTracker()
         {
             timer = new Timer(1000.0f);
             Begin();

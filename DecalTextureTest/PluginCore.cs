@@ -5,7 +5,7 @@ using System.Reflection;
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using ImGuiNET;
-using static DecalTextureTest.Tracker;
+using static DecalTextureTest.LandcellTracker;
 using Timer = System.Timers.Timer;
 
 namespace DecalTextureTest
@@ -22,7 +22,7 @@ namespace DecalTextureTest
         public static ImFontPtr font;
 
         // Tracking
-        Tracker tracker;
+        LandcellTracker tracker;
 
         // Misc
         public static string AssemblyDirectory { get; internal set; }
@@ -43,7 +43,7 @@ namespace DecalTextureTest
                 //ui = new DebugUI();
                 //tui = new TextDebug();
 
-                tracker = new Tracker();
+                tracker = new LandcellTracker();
                 tracker.LandcellChangedEvent += Tracker_LandcellChangedEvent; ;
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace DecalTextureTest
             {
                 Log("Portal exited");
 
-                // FIXME: This is just temporary until Tracker.cs is built out
+                // FIXME: This is just temporary until LandcellTracker.cs is built out
                 Location l = new Location(CoreManager.Current.Actions.Landcell);
 
                 if (l.IsIndoors())
