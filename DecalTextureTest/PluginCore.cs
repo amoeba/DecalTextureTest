@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Timers;
-using AcClient;
+
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using ImGuiNET;
+using static DecalTextureTest.Tracker;
 using Timer = System.Timers.Timer;
 
 namespace DecalTextureTest
@@ -18,7 +18,11 @@ namespace DecalTextureTest
 
         // Imgui
         private DebugUI ui;
+        private TextDebug tui;
         public static ImFontPtr font;
+
+        // Tracking
+        Tracker tracker;
 
         // Misc
         public static string AssemblyDirectory { get; internal set; }
@@ -36,7 +40,11 @@ namespace DecalTextureTest
                 CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
 
                 SetUpImgui();
-                ui = new DebugUI();
+                //ui = new DebugUI();
+                //tui = new TextDebug();
+
+                tracker = new Tracker();
+                tracker.LandcellChangedEvent += Tracker_LandcellChangedEvent; ;
             }
             catch (Exception ex)
             {
@@ -50,9 +58,13 @@ namespace DecalTextureTest
             {
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.ChangePortalMode -= CharacterFilter_ChangePortalMode;
+;
+                tracker.LandcellChangedEvent -= Tracker_LandcellChangedEvent;
 
                 if (ui != null) ui.Dispose();
+                if (tui != null) tui.Dispose();
                 if (timer != null) timer.Dispose();
+                if (tracker!= null) tracker.Dispose();
             }
             catch (Exception ex)
             {
@@ -93,8 +105,14 @@ namespace DecalTextureTest
             }
         }
 
+        private void Tracker_LandcellChangedEvent(object sender, LandcellChangedEventArgs e)
+        {
+            ShowMessage((e.Landcell * 1).ToString());
+        }
+
         public static void ShowMessage(string message)
         {
+            // TODO: Handle the case where ShowMessage is called more often than the timer
             ExampleUI tempHud = new ExampleUI(message);
             Timer timer = new Timer(duration_ms);
             timer.Elapsed += (s, e) =>
