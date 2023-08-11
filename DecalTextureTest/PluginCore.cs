@@ -40,7 +40,7 @@ namespace DecalTextureTest
                 CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
 
                 SetUpImgui();
-                //ui = new DebugUI();
+                ui = new DebugUI();
                 //tui = new TextDebug();
 
                 tracker = new LandcellTracker();
@@ -107,13 +107,16 @@ namespace DecalTextureTest
 
         private void Tracker_LandcellChangedEvent(object sender, LandcellChangedEventArgs e)
         {
-            ShowMessage((e.Landcell * 1).ToString());
+            //ShowMessage((e.Landcell * 1).ToString());
         }
 
-        public static void ShowMessage(string message)
+        public static void ShowMessage(string message, bool destroy=false)
         {
             // TODO: Handle the case where ShowMessage is called more often than the timer
             ExampleUI tempHud = new ExampleUI(message);
+            
+            if (!destroy) { return; }
+
             Timer timer = new Timer(duration_ms);
             timer.Elapsed += (s, e) =>
             {

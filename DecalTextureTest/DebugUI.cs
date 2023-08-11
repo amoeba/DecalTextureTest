@@ -11,6 +11,10 @@ namespace DecalTextureTest
     internal class DebugUI : IDisposable
     {
         private readonly Hud hud;
+        private bool isDemoOpen = false;
+        private bool isDebugMode = false;
+        private bool showRulers = false;
+        private bool isDebugUIOpen = false;
 
         public DebugUI()
         {
@@ -28,7 +32,7 @@ namespace DecalTextureTest
             try
             {
                 ImGui.SetNextWindowPos(new Vector2(100, 100), ImGuiCond.Appearing);
-                ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.Appearing);
+                ImGui.SetNextWindowSize(new Vector2(300, 200), ImGuiCond.Appearing);
             }
             catch (Exception ex)
             {
@@ -40,25 +44,54 @@ namespace DecalTextureTest
         {
             try
             {
-                ImGui.Text("Debug UI");
-                if (ImGui.Button("Spawn text"))
-                {
-                    CoreManager.Current.Actions.AddChatText("Spawned", 1);
-                    PluginCore.ShowMessage("Test!");
 
+                ImGui.ShowDemoWindow(ref isDemoOpen);
+                ShowDebugUI(isDebugUIOpen);
+
+                if (ImGui.BeginTabBar("MainTabBar"))
+                {
+                    if (ImGui.BeginTabItem("Options"))
+                    {
+                        ImGui.Text("TODO");
+                        ImGui.EndTabItem();
+                    }
+
+                    if (ImGui.BeginTabItem("Font"))
+                    {
+                        ImGui.Text("Font...");
+                        ImGui.EndTabItem();
+                    }
+
+                    if (ImGui.BeginTabItem("Debug"))
+                    {
+                        ImGui.Checkbox("Debug mode", ref isDebugMode);
+
+                        if (ImGui.Button("Show Debug UI"))
+                        {
+                            isDebugUIOpen = false;
+                        }
+
+                        ImGui.Checkbox("Show rulers", ref showRulers);
+                        ImGui.EndTabItem();
+                    }
+
+                    if (ImGui.BeginTabItem("About"))
+                    {
+                        ImGui.Text("About...");
+                        ImGui.EndTabItem();
+                    }
+                    ImGui.EndTabBar();
                 }
-                Vector2 size_one = ImGui.CalcTextSize("Hello World");
-                ImGui.PushFont(PluginCore.font);
-                Vector2 size_two = ImGui.CalcTextSize("Hello World");
-                ImGui.Text("Text in Custom Font");
-                ImGui.PopFont();
-                ImGui.Text("Size One is " + size_one.X.ToString());
-                ImGui.Text("Size Two is " + size_two.X.ToString());
             }
             catch (Exception ex)
             {
                 PluginCore.Log(ex);
             }
+        }
+
+        private void ShowDebugUI(bool isDebugUIOpen)
+        {
+            // TODO
         }
 
         public void Dispose()
