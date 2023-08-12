@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
 
-using Decal.Adapter;
 using ImGuiNET;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
@@ -11,14 +10,13 @@ namespace DecalTextureTest
     internal class DebugUI : IDisposable
     {
         private readonly Hud hud;
-        private bool isDemoOpen = false;
-        private bool isDebugMode = false;
-        private bool showRulers = false;
-        private bool isDebugUIOpen = false;
+        private int width = 300;
+        private int height = 200;
 
         public DebugUI()
         {
-            hud = UBService.Huds.CreateHud("DecalTextureTest");
+
+            hud = UBService.Huds.CreateHud("DebugUI");
             hud.ShowInBar = true;
             hud.Visible = true;
             //hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
@@ -31,8 +29,10 @@ namespace DecalTextureTest
         {
             try
             {
-                ImGui.SetNextWindowPos(new Vector2(100, 100), ImGuiCond.Appearing);
-                ImGui.SetNextWindowSize(new Vector2(300, 200), ImGuiCond.Appearing);
+                var v = ImGui.GetMainViewport();
+                var c = v.GetCenter();
+                ImGui.SetNextWindowPos(new Vector2(c.X - width / 2, c.Y - width / 2));
+                ImGui.SetNextWindowSize(new Vector2(width, height), ImGuiCond.Appearing);
             }
             catch (Exception ex)
             {
@@ -44,54 +44,36 @@ namespace DecalTextureTest
         {
             try
             {
+                Vector2 size = ImGui.GetContentRegionAvail();
+                ImGui.InvisibleButton("renderbutton", size);
+                Vector2 p0 = ImGui.GetItemRectMin();
+                Vector2 p1 = ImGui.GetItemRectMax();
+                ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+                drawList.PushClipRect(p0, p1);
 
-                ImGui.ShowDemoWindow(ref isDemoOpen);
-                ShowDebugUI(isDebugUIOpen);
+                // Do things
+                string text = "Test Message";
 
-                if (ImGui.BeginTabBar("MainTabBar"))
-                {
-                    if (ImGui.BeginTabItem("Options"))
-                    {
-                        ImGui.Text("TODO");
-                        ImGui.EndTabItem();
-                    }
+                // Text size
+                ImGui.PushFont(PluginCore.font);
+                Vector2 text_size = ImGui.CalcTextSize(text);
+                ImGui.PopFont();
 
-                    if (ImGui.BeginTabItem("Font"))
-                    {
-                        ImGui.Text("Font...");
-                        ImGui.EndTabItem();
-                    }
+                Vector2 center = p0 + (p1 - p0) / 2;
+                Vector2 offset = new Vector2(-text_size.X / 2, -text_size.Y / 2);
+                
+                // DEBUG: Find center
+                drawList.AddLine(new Vector2(p0.X + (p1.X-p0.X)/2, p0.Y), new Vector2(p0.X + (p1.X - p0.X) / 2, p1.Y), 0xFFFFFFFF);
+                drawList.AddLine(new Vector2(p0.X, p0.Y + (p1.Y - p0.Y)/2), new Vector2(p1.X, p0.Y + (p1.Y - p0.Y) / 2), 0xFFFFFFFF);
 
-                    if (ImGui.BeginTabItem("Debug"))
-                    {
-                        ImGui.Checkbox("Debug mode", ref isDebugMode);
+                drawList.AddText(PluginCore.font, PluginCore.font.FontSize, center + offset, 0xFFFFFFFF, text);
 
-                        if (ImGui.Button("Show Debug UI"))
-                        {
-                            isDebugUIOpen = false;
-                        }
-
-                        ImGui.Checkbox("Show rulers", ref showRulers);
-                        ImGui.EndTabItem();
-                    }
-
-                    if (ImGui.BeginTabItem("About"))
-                    {
-                        ImGui.Text("About...");
-                        ImGui.EndTabItem();
-                    }
-                    ImGui.EndTabBar();
-                }
+                drawList.PopClipRect();
             }
             catch (Exception ex)
             {
                 PluginCore.Log(ex);
             }
-        }
-
-        private void ShowDebugUI(bool isDebugUIOpen)
-        {
-            // TODO
         }
 
         public void Dispose()

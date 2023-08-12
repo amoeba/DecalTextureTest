@@ -17,9 +17,14 @@ namespace DecalTextureTest
         public static int duration_ms = 3000;
 
         // Imgui
-        private DebugUI ui;
-        private TextDebug tui;
+        private PluginUI pluginUI;
+        private DebugUI debugUI;
+        private BannerUI dui;
         public static ImFontPtr font;
+        public static bool isDemoOpen = false;
+        public static bool isDebugMode = false;
+        public static bool showRulers = false;
+        public static bool isDebugUIOpen = false;
 
         // Tracking
         LandcellTracker tracker;
@@ -40,8 +45,8 @@ namespace DecalTextureTest
                 CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
 
                 SetUpImgui();
-                ui = new DebugUI();
-                //tui = new TextDebug();
+                pluginUI = new PluginUI();
+                debugUI = new DebugUI();
 
                 tracker = new LandcellTracker();
                 tracker.LandcellChangedEvent += Tracker_LandcellChangedEvent; ;
@@ -61,8 +66,9 @@ namespace DecalTextureTest
 ;
                 tracker.LandcellChangedEvent -= Tracker_LandcellChangedEvent;
 
-                if (ui != null) ui.Dispose();
-                if (tui != null) tui.Dispose();
+                if (pluginUI != null) pluginUI.Dispose();
+                if (dui != null) dui.Dispose();
+                if (debugUI != null) debugUI.Dispose();
                 if (timer != null) timer.Dispose();
                 if (tracker!= null) tracker.Dispose();
             }
@@ -113,7 +119,7 @@ namespace DecalTextureTest
         public static void ShowMessage(string message, bool destroy=false)
         {
             // TODO: Handle the case where ShowMessage is called more often than the timer
-            ExampleUI tempHud = new ExampleUI(message);
+            BannerUI tempHud = new BannerUI(message);
             
             if (!destroy) { return; }
 

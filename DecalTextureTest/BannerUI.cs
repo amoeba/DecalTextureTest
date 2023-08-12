@@ -8,7 +8,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DecalTextureTest
 {
-    internal class ExampleUI : IDisposable
+    internal class BannerUI : IDisposable
     {
         private readonly Hud hud;
         private string message;
@@ -16,7 +16,7 @@ namespace DecalTextureTest
         private int width = 600;
         private int height = 300;
 
-        public ExampleUI(string _message)
+        public BannerUI(string _message)
         {
             message = _message;
 
