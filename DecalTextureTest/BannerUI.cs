@@ -23,7 +23,11 @@ namespace DecalTextureTest
             hud = UBService.Huds.CreateHud("ExampelUI");
             hud.ShowInBar = true;
             hud.Visible = true;
-            hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
+
+            if (!PluginCore.isDebugModeEnabled)
+            {
+                hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
+            }
 
             hud.OnRender += Hud_OnRender;
             hud.OnPreRender += Hud_OnPreRender;

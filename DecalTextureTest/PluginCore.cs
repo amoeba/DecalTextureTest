@@ -13,18 +13,16 @@ namespace DecalTextureTest
     [FriendlyName("DecalTextureTest")]
     public class PluginCore : PluginBase
     {
-        public Timer timer;
         public static int duration_ms = 3000;
 
         // Imgui
         private PluginUI pluginUI;
-        private DebugUI debugUI;
+        private static DebugUI debugUI;
         public static ImFontPtr font;
-        public static bool isDemoOpen = false;
-        public static bool isDebugMode = false;
-        public static bool showRulers = false;
-        public static bool isDebugUIOpen = false;
-        public static bool isEnabled = false;
+        internal static bool isDemoOpen = false;
+        internal static bool isDebugUIEnabled = false;
+        internal static bool isEnabled = false;
+        internal static bool isDebugModeEnabled;
 
         // Tracking
         LandcellTracker tracker;
@@ -71,8 +69,7 @@ namespace DecalTextureTest
                 CleanUpImgui();
 
                 // Tracker
-                if (timer != null) timer.Dispose();
-                if (tracker!= null) tracker.Dispose();
+                if (tracker != null) tracker.Dispose();
             }
             catch (Exception ex)
             {
@@ -105,10 +102,8 @@ namespace DecalTextureTest
         {
             try
             {
-                // TODO: Handle the case where ShowMessage is called more often than the timer
-                BannerUI tempHud = new BannerUI(message);
-
-                if (!destroy) { return; }
+                // TODO: Handle the case where ShowMessage is called more often than the pollTimer
+                BannerUI hud = new BannerUI(message);
 
                 Timer timer = new Timer(duration_ms);
 
@@ -116,7 +111,8 @@ namespace DecalTextureTest
                 {
                     timer.Stop();
                     timer.Dispose();
-                    tempHud.Dispose();
+                    timer = null;
+                    hud.Dispose();
                 };
 
                 timer.Start();
@@ -161,6 +157,11 @@ namespace DecalTextureTest
             }
         }
 
+        public static void WriteToChat(string message)
+        {
+            CoreManager.Current.Actions.AddChatText(message, 19);
+        }
+
         internal static void Log(Exception ex)
         {
             Log(ex.ToString());
@@ -180,6 +181,35 @@ namespace DecalTextureTest
                     CoreManager.Current.Actions.AddChatText(message, 1);
                 }
                 catch { }
+            }
+        }
+
+        internal static void EnableDebugUI()
+        {
+            try
+            {
+                debugUI = new DebugUI();
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+        }
+
+        internal static void DisableDebugUI()
+        {
+            try
+            {
+                if (debugUI != null)
+                {
+                    debugUI.Dispose();
+                }
+
+                debugUI = null;
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
             }
         }
     }

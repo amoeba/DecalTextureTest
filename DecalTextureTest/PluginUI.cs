@@ -41,7 +41,7 @@ namespace DecalTextureTest
             {
 
                 //ImGui.ShowDemoWindow(ref isDemoOpen);
-                ShowDebugUI(PluginCore.isDebugUIOpen);
+                ShowDebugUI(PluginCore.isDebugUIEnabled);
 
                 if (ImGui.BeginTabBar("MainTabBar"))
                 {
@@ -59,9 +59,20 @@ namespace DecalTextureTest
 
                     if (ImGui.BeginTabItem("Debug"))
                     {
-                        ImGui.Checkbox("Debug mode", ref PluginCore.isDebugMode);
-                        ImGui.Checkbox("Show Debug UI", ref PluginCore.isDebugUIOpen);
-                        ImGui.Checkbox("Show rulers", ref PluginCore.showRulers);
+                        ImGui.Checkbox("Enable Debug Mode", ref PluginCore.isDebugModeEnabled);
+
+                        if (ImGui.Checkbox("Enable Debug UI", ref PluginCore.isDebugUIEnabled))
+                        {
+                            if (PluginCore.isDebugUIEnabled)
+                            {
+                                PluginCore.EnableDebugUI();
+                            }
+                            else
+                            {
+                                PluginCore.DisableDebugUI();
+                            }
+                        }
+
                         ImGui.EndTabItem();
                     }
 

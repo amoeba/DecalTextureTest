@@ -7,20 +7,20 @@ namespace DecalTextureTest
 {
     internal class LandcellTracker : IDisposable
     {
-        private Timer timer;
+        private Timer pollTimer;
         int LastLandcell;
         private static float interval = 1000.0f;
 
 
         public LandcellTracker()
         {
-            timer = new Timer(interval);
+            pollTimer = new Timer(interval);
             Begin();
         }
 
         private void Begin()
         {
-            timer.Elapsed += (s, e) =>
+            pollTimer.Elapsed += (s, e) =>
             {
                 int cell = CoreManager.Current.Actions.Landcell;
 
@@ -32,14 +32,14 @@ namespace DecalTextureTest
                 LastLandcell = cell;
             };
 
-            timer.Start();
+            pollTimer.Start();
         }
 
         public void Dispose()
         {
-            if (timer != null) { 
-                timer.Stop(); 
-                timer.Dispose();
+            if (pollTimer != null) { 
+                pollTimer.Stop(); 
+                pollTimer.Dispose();
             }
         }
 
