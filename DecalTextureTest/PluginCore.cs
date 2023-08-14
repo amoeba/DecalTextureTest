@@ -27,6 +27,10 @@ namespace DecalTextureTest
         // Tracking
         LandcellTracker tracker;
 
+        // Banner
+        internal static int bannerWidth = 600;
+        internal static int bannerHeight = 300;
+
         // Misc
         public static string AssemblyDirectory { get; internal set; }
 

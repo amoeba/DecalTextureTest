@@ -19,7 +19,6 @@ namespace DecalTextureTest
             hud = UBService.Huds.CreateHud("DebugUI");
             hud.ShowInBar = true;
             hud.Visible = true;
-            //hud.WindowSettings = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration;
 
             hud.OnRender += Hud_OnRender;
             hud.OnPreRender += Hud_OnPreRender;
@@ -30,9 +29,10 @@ namespace DecalTextureTest
             try
             {
                 var v = ImGui.GetMainViewport();
+                var vs = v.Size;
                 var c = v.GetCenter();
-                ImGui.SetNextWindowPos(new Vector2(c.X - width / 2, c.Y - width / 2));
-                ImGui.SetNextWindowSize(new Vector2(width, height), ImGuiCond.Appearing);
+                ImGui.SetNextWindowPos(new Vector2(c.X - PluginCore.bannerWidth / 2, vs.Y / 5));
+                ImGui.SetNextWindowSize(new Vector2(PluginCore.bannerWidth, PluginCore.bannerHeight), ImGuiCond.Appearing);
             }
             catch (Exception ex)
             {
