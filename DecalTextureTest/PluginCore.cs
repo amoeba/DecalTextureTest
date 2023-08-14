@@ -14,6 +14,7 @@ namespace DecalTextureTest
     public class PluginCore : PluginBase
     {
         public static int duration_ms = 3000;
+        public static bool isInPortalSpace = false;
 
         // Imgui
         private PluginUI pluginUI;
@@ -52,6 +53,7 @@ namespace DecalTextureTest
 
                 // Events
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
+                CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
                 tracker.LandcellChangedEvent += Tracker_LandcellChangedEvent; ;
             }
             catch (Exception ex)
@@ -66,6 +68,7 @@ namespace DecalTextureTest
             {
                 // Events
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
+                CoreManager.Current.CharacterFilter.ChangePortalMode -= CharacterFilter_ChangePortalMode;
                 tracker.LandcellChangedEvent -= Tracker_LandcellChangedEvent;
 
                 // UI
@@ -92,10 +95,39 @@ namespace DecalTextureTest
             }
         }
 
+        private void CharacterFilter_ChangePortalMode(object sender, ChangePortalModeEventArgs e)
+        {
+            if (e.Type == PortalEventType.EnterPortal)
+            {
+                isInPortalSpace = true;
+            }
+            else if (e.Type == PortalEventType.ExitPortal)
+            {
+                isInPortalSpace = false;
+
+                Location l = new Location(CoreManager.Current.Actions.Landcell);
+
+                if (l.IsIndoors())
+                {
+                    ShowMessage("Dungeon: " + l.ToString());
+                }
+                else
+                {
+                    ShowMessage("Landscape: " + l.ToString());
+                }
+            }
+        }
+
         private void Tracker_LandcellChangedEvent(object sender, LandcellChangedEventArgs e)
         {
             if (!isEnabled)
             {
+                return;
+            }
+
+            if (isInPortalSpace)
+            {
+                WriteToChat("isInPortalSpace");
                 return;
             }
 
