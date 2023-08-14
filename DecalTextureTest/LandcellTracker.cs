@@ -9,10 +9,12 @@ namespace DecalTextureTest
     {
         private Timer timer;
         int LastLandcell;
-            
+        private static float interval = 1000.0f;
+
+
         public LandcellTracker()
         {
-            timer = new Timer(1000.0f);
+            timer = new Timer(interval);
             Begin();
         }
 
@@ -44,6 +46,7 @@ namespace DecalTextureTest
         protected virtual void OnLandblockChanged(LandcellChangedEventArgs e)
         {
             EventHandler<LandcellChangedEventArgs> handler = LandcellChangedEvent;
+
             if (handler != null)
             {
                 handler(this, e);

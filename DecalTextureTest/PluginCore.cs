@@ -19,12 +19,12 @@ namespace DecalTextureTest
         // Imgui
         private PluginUI pluginUI;
         private DebugUI debugUI;
-        private BannerUI dui;
         public static ImFontPtr font;
         public static bool isDemoOpen = false;
         public static bool isDebugMode = false;
         public static bool showRulers = false;
         public static bool isDebugUIOpen = false;
+        public static bool isEnabled = false;
 
         // Tracking
         LandcellTracker tracker;
@@ -41,14 +41,15 @@ namespace DecalTextureTest
         {
             try
             { 
-                CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
-                CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
-
+                // UI
                 SetUpImgui();
                 pluginUI = new PluginUI();
-                debugUI = new DebugUI();
 
+                // Tracker
                 tracker = new LandcellTracker();
+
+                // Events
+                CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
                 tracker.LandcellChangedEvent += Tracker_LandcellChangedEvent; ;
             }
             catch (Exception ex)
@@ -61,14 +62,15 @@ namespace DecalTextureTest
         {
             try
             {
+                // Events
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
-                CoreManager.Current.CharacterFilter.ChangePortalMode -= CharacterFilter_ChangePortalMode;
-;
                 tracker.LandcellChangedEvent -= Tracker_LandcellChangedEvent;
 
+                // UI
                 if (pluginUI != null) pluginUI.Dispose();
-                if (dui != null) dui.Dispose();
-                if (debugUI != null) debugUI.Dispose();
+                CleanUpImgui();
+
+                // Tracker
                 if (timer != null) timer.Dispose();
                 if (tracker!= null) tracker.Dispose();
             }
@@ -81,6 +83,7 @@ namespace DecalTextureTest
         private void CharacterFilter_LoginComplete(object sender, EventArgs e)
         {
             try {
+                // NYE
             }
             catch (Exception ex)
             {
@@ -88,49 +91,39 @@ namespace DecalTextureTest
             }
         }
 
-        private void CharacterFilter_ChangePortalMode(object sender, ChangePortalModeEventArgs e)
-        {
-            if (e.Type == PortalEventType.EnterPortal)
-            {
-                Log("Portal Entered");
-            }
-            else if (e.Type == PortalEventType.ExitPortal)
-            {
-                Log("Portal exited");
-
-                // FIXME: This is just temporary until LandcellTracker.cs is built out
-                Location l = new Location(CoreManager.Current.Actions.Landcell);
-
-                if (l.IsIndoors())
-                {
-                    ShowMessage("Holtburg Town Hall");
-                } else
-                {
-                    ShowMessage("Holtburg");
-                }
-            }
-        }
-
         private void Tracker_LandcellChangedEvent(object sender, LandcellChangedEventArgs e)
         {
-            //ShowMessage((e.Landcell * 1).ToString());
+            if (!isEnabled)
+            {
+                return;
+            }
+
+            ShowMessage((e.Landcell * 1).ToString());
         }
 
         public static void ShowMessage(string message, bool destroy=false)
         {
-            // TODO: Handle the case where ShowMessage is called more often than the timer
-            BannerUI tempHud = new BannerUI(message);
-            
-            if (!destroy) { return; }
-
-            Timer timer = new Timer(duration_ms);
-            timer.Elapsed += (s, e) =>
+            try
             {
-                timer.Stop();
-                timer.Dispose();
-                tempHud.Dispose();
-            };
-            timer.Start();
+                // TODO: Handle the case where ShowMessage is called more often than the timer
+                BannerUI tempHud = new BannerUI(message);
+
+                if (!destroy) { return; }
+
+                Timer timer = new Timer(duration_ms);
+
+                timer.Elapsed += (s, e) =>
+                {
+                    timer.Stop();
+                    timer.Dispose();
+                    tempHud.Dispose();
+                };
+
+                timer.Start();
+            } catch (Exception ex)
+            {
+                Log(ex);
+            }
         }
 
         private void SetUpImgui()
@@ -150,6 +143,18 @@ namespace DecalTextureTest
                 ImGuiIOPtr io = ImGui.GetIO();
                 font = io.Fonts.AddFontFromFileTTF(font_path, 46.0f);
             }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+        }
+
+        private void CleanUpImgui()
+        {
+            try
+            {
+                font.Destroy();
+            }           
             catch (Exception ex)
             {
                 Log(ex);

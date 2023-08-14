@@ -47,7 +47,7 @@ namespace DecalTextureTest
                 {
                     if (ImGui.BeginTabItem("Options"))
                     {
-                        ImGui.Text("TODO");
+                        ImGui.Checkbox("Enable Plugin", ref PluginCore.isEnabled);
                         ImGui.EndTabItem();
                     }
 
