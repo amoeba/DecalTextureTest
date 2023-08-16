@@ -50,6 +50,9 @@ namespace DecalTextureTest
                     if (ImGui.BeginTabItem("Options"))
                     {
                         ImGui.Checkbox("Enable Plugin", ref PluginCore.isEnabled);
+                        ImGui.Checkbox("Notify on landblock change", ref PluginCore.notifyOnLandblockChanged);
+                        ImGui.Checkbox("Notify on landcell change", ref PluginCore.notifyOnLandcellChanged);
+
                         ImGui.EndTabItem();
                     }
 
@@ -76,7 +79,6 @@ namespace DecalTextureTest
                         }
 
                         // WIP
-
                         if (ImGui.Button("Spawn Test Rect"))
                         {
                             WorldObject wo = CoreManager.Current.WorldFilter[CoreManager.Current.CharacterFilter.Id];
@@ -87,8 +89,24 @@ namespace DecalTextureTest
                                 (float) CoreManager.Current.Actions.LocationZ,
                                 D3DShape.Cube,
                                 Color.Red.ToArgb());
-                            x.ScaleX = 10.0f;
-                            x.ScaleY = 10.0f;
+                            x.ScaleX = 100.0f;
+                            x.ScaleY = 100.0f;
+                        }
+
+                        if (ImGui.Button("Spawn Rect For Current LB"))
+                        {
+                            //WorldObject wo = CoreManager.Current.WorldFilter[CoreManager.Current.CharacterFilter.Id];
+                            //CoordsObject co = wo.Coordinates();
+                            //CoreManager.Current.Actions.Landcell
+
+                            //var x = CoreManager.Current.D3DService.MarkCoordsWithShape(
+                            //    (float)co.NorthSouth,
+                            //    (float)co.EastWest,
+                            //    (float)CoreManager.Current.Actions.LocationZ,
+                            //    D3DShape.Cube,
+                            //    Color.Red.ToArgb());
+                            //x.ScaleX = 10.0f;
+                            //x.ScaleY = 10.0f;
                         }
 
                         ImGui.EndTabItem();

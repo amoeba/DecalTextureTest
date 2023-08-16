@@ -8,6 +8,7 @@ namespace DecalTextureTest
     internal class LandcellTracker : IDisposable
     {
         private Timer pollTimer;
+        int LastLandblock;
         int LastLandcell;
         private static float interval = 1000.0f;
 
@@ -22,14 +23,20 @@ namespace DecalTextureTest
         {
             pollTimer.Elapsed += (s, e) =>
             {
-                int cell = CoreManager.Current.Actions.Landcell;
+                Location l = new Location(CoreManager.Current.Actions.Landcell);
 
-                if (cell != LastLandcell)
+                if (l.GetLandcell() != LastLandcell)
                 {
-                    OnLandblockChanged(new LandcellChangedEventArgs { Landcell = cell });
+                    OnLandcellChanged(new LandcellChangedEventArgs { Landcell = l.GetLandcell() });
                 }
 
-                LastLandcell = cell;
+                if (l.GetLandblock() != LastLandblock)
+                {
+                    OnLandblockChanged(new LandblockChangedEventArgs { Landblock = l.GetLandblock() });
+                }
+
+                LastLandcell = l.GetLandcell();
+                LastLandblock = l.GetLandblock();
             };
 
             pollTimer.Start();
@@ -43,7 +50,8 @@ namespace DecalTextureTest
             }
         }
 
-        protected virtual void OnLandblockChanged(LandcellChangedEventArgs e)
+        // Landcell
+        protected virtual void OnLandcellChanged(LandcellChangedEventArgs e)
         {
             EventHandler<LandcellChangedEventArgs> handler = LandcellChangedEvent;
 
@@ -54,10 +62,28 @@ namespace DecalTextureTest
         }
 
         public event EventHandler<LandcellChangedEventArgs> LandcellChangedEvent;
+
+        // Landblock
+        protected virtual void OnLandblockChanged(LandblockChangedEventArgs e)
+        {
+            EventHandler<LandblockChangedEventArgs> handler = LandblockChangedEvent;
+
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        public event EventHandler<LandblockChangedEventArgs> LandblockChangedEvent;
     }
 
     public class LandcellChangedEventArgs : EventArgs
     {
         public int Landcell { get; set; }
+    }
+
+    public class LandblockChangedEventArgs : EventArgs
+    {
+        public int Landblock { get; set; }
     }
 }

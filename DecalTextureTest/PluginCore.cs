@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 
@@ -24,6 +25,8 @@ namespace DecalTextureTest
         internal static bool isDebugUIEnabled = false;
         internal static bool isEnabled = false;
         internal static bool isDebugModeEnabled;
+        internal static bool notifyOnLandblockChanged = false;
+        internal static bool notifyOnLandcellChanged = false;
 
         // Tracking
         LandcellTracker tracker;
@@ -55,6 +58,7 @@ namespace DecalTextureTest
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
                 tracker.LandcellChangedEvent += Tracker_LandcellChangedEvent; ;
+                tracker.LandblockChangedEvent += Tracker_LandblockChangedEvent; ; ;
             }
             catch (Exception ex)
             {
@@ -118,6 +122,26 @@ namespace DecalTextureTest
             }
         }
 
+        private void Tracker_LandblockChangedEvent(object sender, LandblockChangedEventArgs e)
+        {
+            if (!isEnabled)
+            {
+                return;
+            }
+
+            if (isInPortalSpace)
+            {
+                return;
+            }
+
+            if (!notifyOnLandblockChanged)
+            {
+                return;
+            }
+
+            ShowMessage("block: " + e.Landblock.ToString());
+        }
+
         private void Tracker_LandcellChangedEvent(object sender, LandcellChangedEventArgs e)
         {
             if (!isEnabled)
@@ -127,11 +151,15 @@ namespace DecalTextureTest
 
             if (isInPortalSpace)
             {
-                WriteToChat("isInPortalSpace");
                 return;
             }
 
-            ShowMessage((e.Landcell * 1).ToString());
+            if (!notifyOnLandcellChanged)
+            {
+                return;
+            }
+
+            ShowMessage("cell: " + e.Landcell.ToString());
         }
 
         public static void ShowMessage(string message, bool destroy=false)

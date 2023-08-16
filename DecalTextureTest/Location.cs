@@ -64,5 +64,15 @@ namespace DecalTextureTest
         {
             return (Landcell & 0x0000FF00) != 0;
         }
+
+        public int GetLandblock()
+        {
+            return (int)(Landcell & 0xFFFF000);
+        }
+
+        public int GetLandcell()
+        {
+            return Landcell;
+        }
     }
 }
