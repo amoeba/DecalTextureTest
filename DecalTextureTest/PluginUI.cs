@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Drawing;
 using System.Numerics;
 
 using Decal.Adapter;
+using Decal.Adapter.Wrappers;
 using ImGuiNET;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
@@ -10,7 +12,7 @@ namespace DecalTextureTest
 {
     internal class PluginUI : IDisposable
     {
-        private readonly Hud hud;
+        private readonly UtilityBelt.Service.Views.Hud hud;
 
         public PluginUI(bool _showInBar = true, bool _visible = true)
         {
@@ -71,6 +73,22 @@ namespace DecalTextureTest
                             {
                                 PluginCore.DisableDebugUI();
                             }
+                        }
+
+                        // WIP
+
+                        if (ImGui.Button("Spawn Test Rect"))
+                        {
+                            WorldObject wo = CoreManager.Current.WorldFilter[CoreManager.Current.CharacterFilter.Id];
+                            CoordsObject co = wo.Coordinates();
+                            var x = CoreManager.Current.D3DService.MarkCoordsWithShape(
+                                (float) co.NorthSouth, 
+                                (float) co.EastWest, 
+                                (float) CoreManager.Current.Actions.LocationZ,
+                                D3DShape.Cube,
+                                Color.Red.ToArgb());
+                            x.ScaleX = 10.0f;
+                            x.ScaleY = 10.0f;
                         }
 
                         ImGui.EndTabItem();
