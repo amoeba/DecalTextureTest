@@ -14,26 +14,16 @@ namespace DecalTextureTest
     [FriendlyName("DecalTextureTest")]
     public class PluginCore : PluginBase
     {
-        public static int duration_ms = 3000;
         public static bool isInPortalSpace = false;
 
         // Imgui
         private PluginUI pluginUI;
         private static DebugUI debugUI;
         public static ImFontPtr font;
-        internal static bool isDemoOpen = false;
-        internal static bool isDebugUIEnabled = false;
-        internal static bool isEnabled = false;
-        internal static bool isDebugModeEnabled;
-        internal static bool notifyOnLandblockChanged = false;
-        internal static bool notifyOnLandcellChanged = false;
 
         // Tracking
         LandcellTracker tracker;
 
-        // Banner
-        internal static int bannerWidth = 600;
-        internal static int bannerHeight = 300;
 
         // Misc
         public static string AssemblyDirectory { get; internal set; }
@@ -124,7 +114,7 @@ namespace DecalTextureTest
 
         private void Tracker_LandblockChangedEvent(object sender, LandblockChangedEventArgs e)
         {
-            if (!isEnabled)
+            if (!Settings.IsPluginEnabled)
             {
                 return;
             }
@@ -134,7 +124,7 @@ namespace DecalTextureTest
                 return;
             }
 
-            if (!notifyOnLandblockChanged)
+            if (!Settings.ShouldNotifyOnLandblockChanged)
             {
                 return;
             }
@@ -144,7 +134,7 @@ namespace DecalTextureTest
 
         private void Tracker_LandcellChangedEvent(object sender, LandcellChangedEventArgs e)
         {
-            if (!isEnabled)
+            if (!Settings.IsPluginEnabled)
             {
                 return;
             }
@@ -154,9 +144,14 @@ namespace DecalTextureTest
                 return;
             }
 
-            if (!notifyOnLandcellChanged)
+            if (!Settings.ShouldNotifyOnLandcellChanged)
             {
                 return;
+            }
+
+            if (true)
+            {
+                WriteToChat("Tracker_LandcellChangedEvent: " + e.Landcell.ToString());
             }
 
             ShowMessage("cell: " + e.Landcell.ToString());
@@ -169,7 +164,7 @@ namespace DecalTextureTest
                 // TODO: Handle the case where ShowMessage is called more often than the pollTimer
                 BannerUI hud = new BannerUI(message);
 
-                Timer timer = new Timer(duration_ms);
+                Timer timer = new Timer(Settings.BannderDurationMS);
 
                 timer.Elapsed += (s, e) =>
                 {

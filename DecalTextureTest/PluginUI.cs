@@ -43,15 +43,15 @@ namespace DecalTextureTest
             {
 
                 //ImGui.ShowDemoWindow(ref isDemoOpen);
-                ShowDebugUI(PluginCore.isDebugUIEnabled);
+                ShowDebugUI(Settings.IsDebugUIEnabled);
 
                 if (ImGui.BeginTabBar("MainTabBar"))
                 {
                     if (ImGui.BeginTabItem("Options"))
                     {
-                        ImGui.Checkbox("Enable Plugin", ref PluginCore.isEnabled);
-                        ImGui.Checkbox("Notify on landblock change", ref PluginCore.notifyOnLandblockChanged);
-                        ImGui.Checkbox("Notify on landcell change", ref PluginCore.notifyOnLandcellChanged);
+                        ImGui.Checkbox("Enable Plugin", ref Settings.IsPluginEnabled);
+                        ImGui.Checkbox("Notify on landblock change", ref Settings.ShouldNotifyOnLandblockChanged);
+                        ImGui.Checkbox("Notify on landcell change", ref Settings.ShouldNotifyOnLandcellChanged);
 
                         ImGui.EndTabItem();
                     }
@@ -64,11 +64,11 @@ namespace DecalTextureTest
 
                     if (ImGui.BeginTabItem("Debug"))
                     {
-                        ImGui.Checkbox("Enable Debug Mode", ref PluginCore.isDebugModeEnabled);
+                        ImGui.Checkbox("Enable Debug Mode", ref Settings.IsPluginInDebugMode);
 
-                        if (ImGui.Checkbox("Enable Debug UI", ref PluginCore.isDebugUIEnabled))
+                        if (ImGui.Checkbox("Enable Debug UI", ref Settings.IsDebugUIEnabled))
                         {
-                            if (PluginCore.isDebugUIEnabled)
+                            if (Settings.IsDebugUIEnabled)
                             {
                                 PluginCore.EnableDebugUI();
                             }

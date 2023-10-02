@@ -31,8 +31,8 @@ namespace DecalTextureTest
                 var v = ImGui.GetMainViewport();
                 var vs = v.Size;
                 var c = v.GetCenter();
-                ImGui.SetNextWindowPos(new Vector2(c.X - PluginCore.bannerWidth / 2, vs.Y / 5));
-                ImGui.SetNextWindowSize(new Vector2(PluginCore.bannerWidth, PluginCore.bannerHeight), ImGuiCond.Appearing);
+                ImGui.SetNextWindowPos(new Vector2(c.X - Settings.BannerWidthPx / 2, vs.Y / 5));
+                ImGui.SetNextWindowSize(new Vector2(Settings.BannerWidthPx, Settings.BannerHeightPx), ImGuiCond.Appearing);
             }
             catch (Exception ex)
             {
