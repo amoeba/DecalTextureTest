@@ -125,7 +125,7 @@ namespace DecalTextureTest
 
             if (Settings.IsPluginInDebugMode)
             {
-                WriteToChat("Tracker_LandblockChangedEvent: " + e.Landblock.ToString());
+                WriteToChat("Tracker_LandblockChangedEvent: 0x" + e.Landblock.ToString("X8"));
             }
 
             if (!Settings.ShouldShowBanner || !Settings.ShouldNotifyOnLandblockChanged)
@@ -133,7 +133,7 @@ namespace DecalTextureTest
                 return;
             }
 
-            ShowMessage("block: " + e.Landblock.ToString());
+            ShowMessage("Landblock: 0x" + e.Landblock.ToString("X8"));
         }
 
         private void Tracker_LandcellChangedEvent(object sender, LandcellChangedEventArgs e)
@@ -150,7 +150,7 @@ namespace DecalTextureTest
 
             if (Settings.IsPluginInDebugMode)
             {
-                WriteToChat("Tracker_LandcellChangedEvent: " + e.Landcell.ToString());
+                WriteToChat("Tracker_LandcellChangedEvent: 0x" + e.Landcell.ToString("X8"));
             }
 
             if (!Settings.ShouldShowBanner || !Settings.ShouldNotifyOnLandcellChanged)
@@ -158,7 +158,7 @@ namespace DecalTextureTest
                 return;
             }
 
-            ShowMessage("cell: " + e.Landcell.ToString());
+            ShowMessage("Landcell: 0x" + e.Landcell.ToString("X8"));
         }
 
         public static void ShowMessage(string message, bool destroy=false)
