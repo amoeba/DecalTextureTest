@@ -21,8 +21,7 @@ namespace DecalTextureTest
         public static ImFontPtr font;
 
         // Tracking
-        LandcellTracker tracker;
-
+        private LandcellTracker tracker;
 
         // Misc
         public static string AssemblyDirectory { get; internal set; }
