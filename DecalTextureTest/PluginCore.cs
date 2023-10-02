@@ -69,6 +69,9 @@ namespace DecalTextureTest
 
                 // Tracker
                 if (tracker != null) tracker.Dispose();
+
+                // Database
+                Database.Cleanup();
             }
             catch (Exception ex)
             {

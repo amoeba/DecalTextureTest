@@ -52,6 +52,9 @@
     <None Update="data\regions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="data\test.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="HyliaSerifBeta-Regular.otf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

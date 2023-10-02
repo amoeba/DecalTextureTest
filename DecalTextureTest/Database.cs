@@ -4,6 +4,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Globalization;
 
 namespace DecalTextureTest
 {
@@ -13,12 +14,13 @@ namespace DecalTextureTest
         public static bool IsLoaded = false;
         public static bool IsLoading = false;
         public static JObject o = null; // TODO: Eventually get rid of this once I figure out parsing
-        public static Dictionary<UInt32, Dictionary<UInt32, string>> Mapping { get; set; }
-        public static Dictionary<UInt32, string> StringMappings { get; set; }
+        public static Dictionary<UInt32, Dictionary<UInt32, UInt32>> Mapping { get; set; }
+        public static UInt32 lastStringMappingKey = 0;
+        public static Dictionary<string, UInt32> ReverseStringMappings { get; set; }
 
         public static void Init() {
-            Mapping = new Dictionary<UInt32, Dictionary<UInt32, string>>();
-            StringMappings = new Dictionary<UInt32, string>();
+            Mapping = new Dictionary<UInt32, Dictionary<UInt32, UInt32>>();
+            ReverseStringMappings = new Dictionary<string, UInt32>();
         }
 
         public static void Load()
@@ -31,7 +33,7 @@ namespace DecalTextureTest
             string loadPath = null;
             try
             {
-                loadPath = Path.Combine(PluginCore.AssemblyDirectory, "data/regions.json");
+                loadPath = Path.Combine(PluginCore.AssemblyDirectory, "data/test.json");
             }
             catch (Exception ex) {
                 PluginCore.Log(ex);
@@ -107,16 +109,76 @@ namespace DecalTextureTest
         {
             // TODO;
             int max = 10;
-            foreach (var item in o.Properties())
-            {
-                PluginCore.WriteToChat(item.Name);
-                max--;
+            UInt32 key; // Re-used as we parse
 
-                if (max <= 0)
+            try
+            {
+                foreach (var item in o.Properties())
                 {
-                    return;
+                    max--;
+
+                    if (max <= 0)
+                    {
+                        break;
+                    }
+
+                    // Do second-level first
+                    JObject child = (JObject)o[item.Name];
+                    Dictionary<UInt32, UInt32> sub = new Dictionary<uint, uint>();
+
+                    foreach (var subitem in child.Properties())
+                    {
+                        key = UInt32.Parse(subitem.Name, NumberStyles.HexNumber);
+                        PluginCore.WriteToChat("Adding sub-level mapping for 0x" + key.ToString("X8"));
+
+                        // Get array members for this item
+                        JArray x = (JArray)subitem.Value;
+
+                        if (x.Count != 1)
+                        {
+                            PluginCore.WriteToChat("Unexpected number of items in array. Skipping.");
+                            continue;
+                        }
+
+                        // Add to StringMapping and use ID
+                        // TODO: Is ToString the best way to get the value out?
+                        sub.Add(key, GetOrSetStringMapping(x[0].ToString()));
+
+                        // Increment ahead of our next value
+                        lastStringMappingKey++;
+                    }
+
+                    // Then add to top level
+                    key = UInt32.Parse(item.Name, NumberStyles.HexNumber);
+                    PluginCore.WriteToChat("Adding top-level mapping for 0x" + key.ToString("X8"));
+                    Mapping.Add(key, sub);
                 }
             }
+            catch (Exception ex)
+            {
+                PluginCore.Log(ex);
+            }
+
+            PluginCore.WriteToChat("Mapping.Count after parse is " + Mapping.Count.ToString());
+            PluginCore.WriteToChat("ReverseStringMappings.Count after parse is " + ReverseStringMappings.Count.ToString());
+        }
+
+        private static UInt32 GetOrSetStringMapping(string value)
+        {
+            if (ReverseStringMappings.ContainsKey(value))
+            {
+                return ReverseStringMappings[value];
+            }
+
+            ReverseStringMappings.Add(value, lastStringMappingKey++);
+
+            return lastStringMappingKey;
+        }
+
+        internal static void Cleanup()
+        {
+            Mapping.Clear();
+            ReverseStringMappings.Clear();
         }
     }
 }
