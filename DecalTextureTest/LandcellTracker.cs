@@ -12,7 +12,6 @@ namespace DecalTextureTest
         int LastLandcell;
         private static float interval = 1000.0f;
 
-
         public LandcellTracker()
         {
             pollTimer = new Timer(interval);
