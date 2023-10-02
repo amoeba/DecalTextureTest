@@ -18,7 +18,6 @@ namespace DecalTextureTest
 
         // Imgui
         private PluginUI pluginUI;
-        private static DebugUI debugUI;
         public static ImFontPtr font;
 
         // Tracking
@@ -124,7 +123,12 @@ namespace DecalTextureTest
                 return;
             }
 
-            if (!Settings.ShouldNotifyOnLandblockChanged)
+            if (Settings.IsPluginInDebugMode)
+            {
+                WriteToChat("Tracker_LandblockChangedEvent: " + e.Landblock.ToString());
+            }
+
+            if (!Settings.ShouldShowBanner || !Settings.ShouldNotifyOnLandblockChanged)
             {
                 return;
             }
@@ -144,14 +148,14 @@ namespace DecalTextureTest
                 return;
             }
 
-            if (!Settings.ShouldNotifyOnLandcellChanged)
-            {
-                return;
-            }
-
-            if (true)
+            if (Settings.IsPluginInDebugMode)
             {
                 WriteToChat("Tracker_LandcellChangedEvent: " + e.Landcell.ToString());
+            }
+
+            if (!Settings.ShouldShowBanner || !Settings.ShouldNotifyOnLandcellChanged)
+            {
+                return;
             }
 
             ShowMessage("cell: " + e.Landcell.ToString());
@@ -240,35 +244,6 @@ namespace DecalTextureTest
                     CoreManager.Current.Actions.AddChatText(message, 1);
                 }
                 catch { }
-            }
-        }
-
-        internal static void EnableDebugUI()
-        {
-            try
-            {
-                debugUI = new DebugUI();
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
-            }
-        }
-
-        internal static void DisableDebugUI()
-        {
-            try
-            {
-                if (debugUI != null)
-                {
-                    debugUI.Dispose();
-                }
-
-                debugUI = null;
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
             }
         }
     }

@@ -14,13 +14,12 @@ namespace DecalTextureTest
         private string message;
         private double t0;
 
-
         public BannerUI(string _message)
         {
             message = _message;
 
-            hud = UBService.Huds.CreateHud("ExampelUI");
-            hud.ShowInBar = true;
+            hud = UBService.Huds.CreateHud("Immerse");
+            hud.ShowInBar = false;
             hud.Visible = true;
 
             if (!Settings.IsPluginInDebugMode)
@@ -60,14 +59,11 @@ namespace DecalTextureTest
                 ImDrawListPtr drawList = ImGui.GetWindowDrawList();
 
                 // Text fading
-                // FIXME: Factor out most of this
-                // FIXME: Figure out if we can properly center our text (i.e. do 
-                //        (font metrics)
                 double t1 = ImGui.GetTime() - t0;
 
                 // Messy bit of code to smoothly move from 0-1 and back to 0
                 double s = Settings.BannderDurationMS / 1000;
-                double t = Math.Min(Math.Max((Math.Sin(t1) * s) / s, 0.0f), 1.0f);
+                double t = Math.Min(Math.Max(Math.Sin(t1) * s / s, 0.0f), 1.0f);
                 uint c = ImGui.Vec4ToCol(new Vector4(1.0f, 1.0f, 1.0f, (float)t));
 
                 // Center text
