@@ -75,6 +75,42 @@ namespace DecalTextureTest
                         ImGui.EndTabItem();
                     }
 
+                    if (ImGui.BeginTabItem("Data"))
+                    {
+                        ImGui.Text("Database Status:");
+
+                        if (Database.IsLoaded) 
+                        {
+                            ImGui.Text("Loaded");
+                        } 
+                        else if (Database.IsLoading)
+                        {
+                            ImGui.Text("Loading...");
+                        }
+                        else
+                        {
+                            ImGui.Text("Not Loaded");
+                        }
+
+                        if (ImGui.Button("Load Database"))
+                        {
+                            PluginCore.WriteToChat("Loading database...");
+                            Database.Load();
+                        }
+
+                        if (ImGui.Button("Unload Database"))
+                        {
+                            PluginCore.WriteToChat("Unloading database...");
+                            Database.Unload();
+                        }
+
+                        if (ImGui.Button("Process"))
+                        {
+                            PluginCore.WriteToChat("Processing...");
+                            Database.Parse();
+                        }
+                    }
+
                     if (ImGui.BeginTabItem("About"))
                     {
                         ImGui.Text("About...");

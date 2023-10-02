@@ -49,6 +49,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <None Update="data\regions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="HyliaSerifBeta-Regular.otf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
