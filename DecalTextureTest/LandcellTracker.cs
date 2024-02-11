@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Timers;
-using ACE.DatLoader.Entity;
 using Decal.Adapter;
 
 namespace DecalTextureTest

@@ -14,6 +14,9 @@
     <AssemblyName>DecalTextureTest</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="resources\fonts\HyliaSerifBeta-Regular.otf" />
+    <None Remove="resources\fonts\Tahoma.ttf" />
+    <None Remove="resources\fonts\viking_n.ttf" />
     <None Remove="test.png" />
   </ItemGroup>
   <ItemGroup>
@@ -26,6 +29,12 @@
     <Content Include="deps\Decal.Interop.Core.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="resources\fonts\HyliaSerifBeta-Regular.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\fonts\Tahoma.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="test.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -38,19 +47,33 @@
     <Reference Include="Microsoft.DirectX.Direct3D">
       <HintPath>..\deps\Microsoft.DirectX.Direct3D.dll</HintPath>
     </Reference>
+    <Reference Include="UtilityBelt.Service">
+      <HintPath>..\..\..\..\..\Games\DecalPlugins\UtilityBelt.Service\UtilityBelt.Service.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NSIS-Tool" Version="3.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="UtilityBelt.Service" Version="2.1.2">
-      <ExcludeAssets>runtime; build;</ExcludeAssets>
-    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\fonts\viking_n.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <None Update="HyliaSerifBeta-Regular.otf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\fonts\ITC Kabel Std Demi.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\fonts\mael____.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\fonts\Tolkien.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

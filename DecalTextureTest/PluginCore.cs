@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using ImGuiNET;
-using static DecalTextureTest.LandcellTracker;
+
 using Timer = System.Timers.Timer;
 
 namespace DecalTextureTest
@@ -189,23 +188,45 @@ namespace DecalTextureTest
         {
             try
             {
-                // Temporary fix for UB not dealing with fonts right
-                // Don't load our custom font is this is a hot reload
-                if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
-                {
-                    Log("Skipping ImGui setup (font loading) because HMR.");
+                Log("SetUpImgui, start:");
 
-                    return;
-                }
+                SetUpImguiFonts();
+                //UtilityBelt.Service.UBService
 
-                string font_path = AssemblyDirectory + "\\HyliaSerifBeta-Regular.otf";
-                ImGuiIOPtr io = ImGui.GetIO();
-                font = io.Fonts.AddFontFromFileTTF(font_path, 46.0f);
+                Log("SetUpImgui, end.");
             }
             catch (Exception ex)
             {
                 Log(ex);
             }
+        }
+
+        private void SetUpImguiFonts()
+        {
+            try
+            {
+                string font_tahoma = AssemblyDirectory + "\\resources\\fonts\\Tahoma.ttf";
+                string font_hylia = AssemblyDirectory + "\\resources\\fonts\\HyliaSerifBeta-Regular.otf";
+
+                SetUpImguiFontLoad(font_tahoma);
+                SetUpImguiFontLoad(font_hylia);
+            } 
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+        }
+
+        private void SetUpImguiFontLoad(string path)
+        {
+            if (!File.Exists(path))
+            {
+                Log("Skipped trying to load font " + path + " because the file didn't exist.");
+
+                return;
+            }
+
+            UtilityBelt.Service.UBService.Huds.FontManager.RegisterFont(path);
         }
 
         private void CleanUpImgui()
